@@ -8,10 +8,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import model.Greeting;
+import model.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,15 +50,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class HttpRequestTask extends AsyncTask<Void, Void, Greeting> {
+    private class HttpRequestTask extends AsyncTask<Void, Void, ResponseEntity<User>> {
         @Override
-        protected Greeting doInBackground(Void... params) {
+        protected ResponseEntity<User> doInBackground(Void... params) {
             try {
-                final String url = "http://rest-service.guides.spring.io/greeting";
+                final String url = "http://10.0.2.2:8080/login";
+                User user = new User();
+                user.setPassword("1234");
+                user.setUsername("gigi");
                 RestTemplate restTemplate = new RestTemplate();
+
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                Greeting greeting = restTemplate.getForObject(url, Greeting.class);
-                return greeting;
+                //User userReceived = restTemplate.getForObject(url, User.class);
+                ResponseEntity<User> responseEntity =  restTemplate.postForEntity(url,user, User.class);
+
+                return responseEntity;
             } catch (Exception e) {
                 Log.e("MainActivity", e.getMessage(), e);
             }
@@ -65,11 +73,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Greeting greeting) {
+        protected void onPostExecute(ResponseEntity<User> userResponseEntity) {
             TextView greetingIdText = (TextView) findViewById(R.id.id_value);
             TextView greetingContentText = (TextView) findViewById(R.id.content_value);
-            greetingIdText.setText(greeting.getId());
-            greetingContentText.setText(greeting.getContent());
+            //greetingIdText.setText(userResponseEntity.getBody().getId());
+            Log.d("in",userResponseEntity.getBody().getUsername());
+            greetingContentText.setText(userResponseEntity.getBody().getUsername());
         }
 
     }
