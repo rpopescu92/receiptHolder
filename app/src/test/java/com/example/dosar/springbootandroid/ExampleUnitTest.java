@@ -1,4 +1,4 @@
-package com.example.dosar.springbootandroid;
+package com.example.receiptholder.springbootandroid;
 
 import org.junit.Test;
 

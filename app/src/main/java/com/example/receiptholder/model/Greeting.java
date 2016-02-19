@@ -1,4 +1,4 @@
-package model;
+package com.example.receiptholder.model;
 
 /**
  * Created by roxanap on 12.02.2016.
